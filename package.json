@@ -1,0 +1,31 @@
+{
+  "name": "gh-star-troopers",
+  "version": "1.0.0",
+  "description": "List the favorite repos of the team",
+  "main": "index.js",
+  "scripts": {
+    "start": "rimraf .cache dist && parcel ./src/index.html --no-autoinstall",
+    "test": "jest",
+    "build": "rimraf .cache dist && parcel build ./src/index.html --detailed-report"
+  },
+  "license": "MIT",
+  "author": "p.robillard@code-troopers.com",
+  "dependencies": {
+    "@hyperapp/router": "^0.7.0",
+    "@types/lodash": "^4.14.112",
+    "bootstrap": "^4.1.1",
+    "firebase": "^5.2.0",
+    "firebaseui": "^3.1.1",
+    "hyperapp": "^1.2.6",
+    "lodash": "^4.17.10"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.1.5",
+    "hyperapp-redux-devtools": "^1.1.6",
+    "jest": "^23.4.0",
+    "parcel-bundler": "^1.9.4",
+    "rimraf": "^2.6.2",
+    "ts-jest": "^23.0.0",
+    "typescript": "^2.9.2"
+  }
+}
