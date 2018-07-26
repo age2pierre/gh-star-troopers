@@ -3,10 +3,10 @@ import { app } from 'hyperapp'
 import Actions from './Actions'
 import App from './App'
 import { initialState } from './State'
+import devtools from 'hyperapp-redux-devtools'
+import { fbAuth } from './utils/firebase'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
-import devtools from 'hyperapp-redux-devtools'
-import { fbAuth } from './utils/auth'
 
 let main: Actions
 

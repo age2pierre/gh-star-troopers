@@ -1,7 +1,7 @@
 import { State, initialState } from './State'
 import Actions from './Actions'
 import { ReposInfo } from './models/reposInfo'
-import { UserInfo } from './models/userInfo'
+import { StargazerInfo } from './models/stargazerInfo'
 
 const actions = new Actions()
 const ReposInfoA: ReposInfo = {
@@ -23,11 +23,11 @@ const ReposInfoB: ReposInfo = {
   language: 'stringB',
   description: 'stringB',
 }
-const TrackUserA: UserInfo = {
+const TrackUserA: StargazerInfo = {
   username: 'aaa',
   avatarUrl: 'bbb',
 }
-const TrackUserB: UserInfo = {
+const TrackUserB: StargazerInfo = {
   username: 'ccc',
   avatarUrl: 'ddd',
 }
@@ -78,7 +78,7 @@ describe('tracklistAddUser', () => {
       reposStarred: [],
     })(state)
     expect(state).not.toBe(newState)
-    expect(newState.users).toContainEqual({
+    expect(newState.stargazers).toContainEqual({
       username: 'aaa',
       avatarUrl: 'bbb',
       reposStarred: [],
@@ -97,7 +97,7 @@ describe('tracklistAddUser', () => {
       ],
     })(state)
     expect(state).not.toBe(state2)
-    expect(state2.users).toContainEqual({
+    expect(state2.stargazers).toContainEqual({
       username: 'aaa',
       avatarUrl: 'bbb',
       reposStarred: [

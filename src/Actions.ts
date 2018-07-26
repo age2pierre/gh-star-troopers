@@ -1,5 +1,5 @@
 import { ReposInfo, ReposUI } from './models/reposInfo'
-import { UserUI, UserInfo } from './models/userInfo'
+import { Stargazer, StargazerInfo } from './models/stargazerInfo'
 import { State } from './State'
 import { location, LocationActions } from '@hyperapp/router'
 import * as fp from 'lodash/fp'
@@ -8,7 +8,7 @@ import { OrderByValues } from './models/filterRepo'
 export default class Actions {
   // ===================== HOME =====================
 
-  homeAddRepos = (repos: ReposInfo[], stargazer: UserInfo) => (
+  homeAddRepos = (repos: ReposInfo[], stargazer: StargazerInfo) => (
     state: State,
   ): State => {
     return {
@@ -84,15 +84,21 @@ export default class Actions {
 
   // ===================== TRACKLIST =====================
 
-  tracklistAddUser = (user: UserUI) => (state: State): State =>
-    fp.findIndex(oldUser => oldUser.username === user.username, state.users) > 0
+  tracklistAddUser = (stargazer: Stargazer) => (state: State): State =>
+    fp.findIndex(
+      oldUser => oldUser.username === stargazer.username,
+      state.stargazers,
+    ) > 0
       ? state
-      : { ...state, users: fp.concat(state.users, user) }
+      : { ...state, stargazers: fp.concat(state.stargazers, stargazer) }
 
   tracklistRemoveUser = (username: string) => (state: State): State => {
     return {
       ...state,
-      users: fp.remove(user => user.username === username, state.users),
+      stargazers: fp.remove(
+        user => user.username === username,
+        state.stargazers,
+      ),
     }
   }
 
@@ -116,9 +122,25 @@ export default class Actions {
     ...state,
     auth: {
       authed: !!user,
-      user: user,
+      email: user ? user.email : null,
+      githubAccesToken: user ? state.auth.githubAccesToken : null, // user is only null when signout
+      profilePicUrl: user ? user.photoURL : null,
+      username: user ? user.displayName : null,
     },
   })
+
+  setGithubAccesToken = (userCred: firebase.auth.UserCredential) => (
+    state: State,
+  ): State => {
+    console.log('usercred => ' + JSON.stringify(userCred))
+    return {
+      ...state,
+      auth: {
+        ...state.auth,
+        githubAccesToken: (userCred.credential as any).accessToken,
+      },
+    }
+  }
 
   // ===================== ROUTER =====================
 

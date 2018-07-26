@@ -1,9 +1,9 @@
-export interface UserInfo {
+export interface StargazerInfo {
   username: string
   avatarUrl: string
 }
 
-export interface UserUI extends UserInfo {
+export interface Stargazer extends StargazerInfo {
   reposStarred: Array<{
     owner: string
     name: string

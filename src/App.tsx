@@ -5,43 +5,53 @@ import { Link, Route, Redirect, Switch } from '@hyperapp/router'
 import { Home } from './Home'
 import { Tracklist } from './TrackList'
 import { SignIn } from './SignIn'
-import { fbAuth } from './utils/auth'
 import { routes } from './routes'
-
-const navItemClass = (path: string, state: State) => {
-  if (path === state.location.pathname) return 'nav-item active'
-  else return 'nav-item'
-}
+import { signOut } from './utils/firebase'
+import ctLogo from './img/ct-logo.png'
 
 export default (state: State, actions: Actions) => (
   <div class="w-auto">
     <nav class="navbar navbar-expand bg-dark navbar-dark fixed-top">
-      <span className="navbar-brand">GH Star Troopers</span>
+      <span className="navbar-brand">
+        <img class="mr-2" width="24" height="24" src={ctLogo} />GH Star Troopers
+      </span>
       <ul class="navbar-nav col">
-        <li class={navItemClass(routes.HOME, state)}>
-          <Link to={routes.HOME}>
-            <span class="nav-link">Home</span>
+        <li
+          class={
+            state.location.pathname === routes.HOME
+              ? 'nav-item active'
+              : 'nav-item'
+          }
+        >
+          <Link to={routes.HOME} class="nav-link">
+            Home
           </Link>
         </li>
-        <li class={navItemClass(routes.TRACK_LIST, state)}>
-          <Link to={routes.TRACK_LIST}>
-            <span class="nav-link">Tracklist</span>
+        <li
+          class={
+            state.location.pathname === routes.TRACK_LIST
+              ? 'nav-item active'
+              : 'nav-item'
+          }
+        >
+          <Link to={routes.TRACK_LIST} class="nav-link">
+            Tracklist
           </Link>
         </li>
       </ul>
       <div className="col-sm-auto">
         <span class="text-light mr-2">
-          {!!state.auth.user
-            ? state.auth.user.displayName
-              ? state.auth.user.displayName
-              : state.auth.user.email
+          {!!state.auth.authed
+            ? state.auth.username
+              ? state.auth.username
+              : state.auth.email
             : ''}
         </span>
         <button
-          onclick={() => fbAuth.signOut()}
+          onclick={signOut}
           class={'btn btn-secondary' + (state.auth.authed ? '' : ' disabled')}
         >
-          {!!state.auth.user ? 'Sign out' : 'NOT LOGGED IN!'}
+          {state.auth.authed ? 'Sign out' : 'NOT LOGGED IN!'}
         </button>
       </div>
     </nav>
@@ -49,7 +59,7 @@ export default (state: State, actions: Actions) => (
       <div class="jumbotron">
         <Switch>
           <Route path="/" render={() => <Redirect to={routes.HOME} />} />
-          <Route path={routes.SIGN_IN} render={SignIn} />
+          <Route path={routes.SIGN_IN} render={SignIn as any} />
           <Route
             path={routes.HOME}
             render={() =>

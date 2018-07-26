@@ -8,7 +8,7 @@ export const Tracklist = () => (state: State, actions: Actions) => {
       <h1>Tracklist</h1>
       <ul class="list-group" oncreate={() => null /* FIXME handle page init*/}>
         <InputBar />
-        {state.users.map(user => (
+        {state.stargazers.map(user => (
           <li class="list-group-item">
             <div className="media">
               <img
@@ -26,10 +26,10 @@ export const Tracklist = () => (state: State, actions: Actions) => {
                   </div>
                   <div className="col text-right">
                     <button
-                      class="btn btn-sm btn-danger close"
+                      class="btn btn-sm btn-danger"
                       onclick={() => null} // FIXME handle delete user
                     >
-                      &times;
+                      <span class="close text-white"> &times;</span>
                     </button>
                   </div>
                 </div>

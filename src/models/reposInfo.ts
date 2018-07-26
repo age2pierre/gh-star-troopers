@@ -1,4 +1,4 @@
-import { UserInfo } from './userInfo'
+import { StargazerInfo } from './stargazerInfo'
 
 export interface ReposInfo {
   name: string
@@ -11,6 +11,6 @@ export interface ReposInfo {
 }
 
 export interface ReposUI extends ReposInfo {
-  starredBy: UserInfo[]
+  starredBy: StargazerInfo[]
   visible: boolean
 }

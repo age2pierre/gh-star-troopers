@@ -6,5 +6,4 @@ export const routes = {
   HOME: '/home',
   TRACK_LIST: '/tracklist',
   SIGN_IN: '/signin',
-  TERM_OF_SERVICE: '/tos',
 }

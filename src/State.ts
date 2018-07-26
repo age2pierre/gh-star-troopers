@@ -1,5 +1,5 @@
 import { ReposUI } from './models/reposInfo'
-import { UserUI } from './models/userInfo'
+import { Stargazer } from './models/stargazerInfo'
 import { LocationState } from '@hyperapp/router'
 import { location } from '@hyperapp/router'
 import { OrderByValues } from './models/filterRepo'
@@ -7,10 +7,13 @@ import { OrderByValues } from './models/filterRepo'
 export interface State {
   location: LocationState
   auth: {
-    user: firebase.User | null
     authed: boolean
+    username: string | null
+    email: string | null
+    profilePicUrl: string | null
+    githubAccesToken: string | null
   }
-  users: UserUI[]
+  stargazers: Stargazer[]
   repos: ReposUI[]
   addingUserFailed: boolean | string
   addUserInput: string
@@ -22,9 +25,14 @@ export const initialState: State = {
   location: location.state,
   auth: {
     authed: false,
-    user: null,
+    username: null,
+    email: null,
+    profilePicUrl: null,
+    githubAccesToken: null,
   },
-  users: [
+  addingUserFailed: false,
+  addUserInput: '',
+  stargazers: [
     {
       avatarUrl:
         'https://wallpaper.sc/en/ipad/wp-content/uploads/2015/12/ipad-2048x2048-thumbnail_01637-256x256.jpg',
@@ -58,8 +66,6 @@ export const initialState: State = {
       ],
     },
   ],
-  addingUserFailed: false,
-  addUserInput: '',
   filterRepoInput: '',
   orderRepoBy: OrderByValues.APLHA,
 }

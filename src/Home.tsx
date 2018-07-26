@@ -3,7 +3,7 @@ import { State } from './State'
 import Actions from './Actions'
 import { ReposUI } from './models/reposInfo'
 import { OrderByValues } from './models/filterRepo'
-import refresh from './refresh.svg'
+import refresh from './img/refresh.svg'
 
 const Filters = () => (state: State, actions: Actions) => {
   return (
@@ -61,10 +61,8 @@ const Tile = (repo: ReposUI) => (
           <a href={repo.htmlUrl} target="_blank" class="text-dark">
             <img
               src={repo.avatarUrl}
-              style={{
-                height: '33px',
-                width: '33px',
-              }}
+              height="33"
+              width="33"
               className="rounded-circle m-2 shadow-sm"
             />
             {repo.name}
@@ -80,11 +78,14 @@ const Tile = (repo: ReposUI) => (
       </div>
     </div>
     <i>{repo.description}</i>
-    {/* {repo.starredBy.map(user => (
-  <span class="badge badge-pill badge-secondary ml-2">
-    {user.username}
-  </span>
-))} */}
+    <p class="mt-2">
+      Starred by :
+      {repo.starredBy.map(user => (
+        <span class="badge badge-pill badge-secondary ml-2">
+          {user.username}
+        </span>
+      ))}
+    </p>
   </li>
 )
 

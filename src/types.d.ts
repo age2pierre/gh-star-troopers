@@ -9,6 +9,11 @@ declare module '*.svg' {
   export default content
 }
 
+declare module '*.png' {
+  const content: any
+  export default content
+}
+
 declare module '@hyperapp/logger' {
   export function withLogger<T>(app: T): T
 }
@@ -24,6 +29,7 @@ declare module '@hyperapp/router' {
   interface LinkProps {
     to: string
     location?: Location
+    class?: string
   }
   export function Link(props: LinkProps): VNode<LinkProps>
 
