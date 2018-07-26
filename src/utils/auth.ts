@@ -10,8 +10,8 @@ export const uiConfig: firebaseui.auth.Config = {
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
     firebase.auth.GithubAuthProvider.PROVIDER_ID,
   ],
-  tosUrl: routes.BASE_URL + routes.HOME,
-  signInFlow: 'popup',
+  tosUrl: routes.BASE_URL,
+  signInFlow: 'redirect',
 }
 
 export const ui = new firebaseui.auth.AuthUI(fb.auth())

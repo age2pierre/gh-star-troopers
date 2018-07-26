@@ -1,6 +1,6 @@
 import { h } from 'hyperapp'
 import Actions from './Actions'
-import State from './State'
+import { State } from './State'
 import { Link, Route, Redirect, Switch } from '@hyperapp/router'
 import { Home } from './Home'
 import { Tracklist } from './TrackList'
@@ -14,7 +14,7 @@ const navItemClass = (path: string, state: State) => {
 }
 
 export default (state: State, actions: Actions) => (
-  <div class="w-auto" oncreate={() => actions.refreshTracklist()}>
+  <div class="w-auto">
     <nav class="navbar navbar-expand bg-dark navbar-dark fixed-top">
       <span className="navbar-brand">GH Star Troopers</span>
       <ul class="navbar-nav col">
@@ -31,7 +31,11 @@ export default (state: State, actions: Actions) => (
       </ul>
       <div className="col-sm-auto">
         <span class="text-light mr-2">
-          {!!state.auth.user ? state.auth.user.displayName : ''}
+          {!!state.auth.user
+            ? state.auth.user.displayName
+              ? state.auth.user.displayName
+              : state.auth.user.email
+            : ''}
         </span>
         <button
           onclick={() => fbAuth.signOut()}

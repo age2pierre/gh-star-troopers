@@ -1,4 +1,4 @@
-import { TrackedUser } from './trackedUser'
+import { UserInfo } from './userInfo'
 
 export interface ReposInfo {
   name: string
@@ -11,6 +11,6 @@ export interface ReposInfo {
 }
 
 export interface ReposUI extends ReposInfo {
-  starredBy: TrackedUser[]
+  starredBy: UserInfo[]
   visible: boolean
 }

@@ -1,121 +1,116 @@
 import { ReposInfo, ReposUI } from './models/reposInfo'
-import { GithubStarred } from './models/githubStarred'
-import { UserUI, TrackedUser } from './models/trackedUser'
-import State from './State'
+import { UserUI, UserInfo } from './models/userInfo'
+import { State } from './State'
 import { location, LocationActions } from '@hyperapp/router'
-import { addUser, getAllUsers, deleteUser } from './utils/firebase'
-import { api } from './utils/api'
 import * as fp from 'lodash/fp'
+import { OrderByValues } from './models/filterRepo'
 
 export default class Actions {
-  location: LocationActions = location.actions
+  // ===================== HOME =====================
 
-  refreshTracklist = () => async (state: State, actions: Actions) => {
-    // get users from firebase
-    const users = await getAllUsers()
-    // get starred repos for each user from github
-    users.forEach(async user => {
-      const res = await api<GithubStarred[]>(
-        `https://api.github.com/users/${user.username}/starred`,
-      )
-      actions.setTrackedUser({
-        username: user.username,
-        avatarUrl: user.avatarUrl,
-        reposStarred: res.map((ghs: GithubStarred) => ({
-          owner: ghs.owner.login,
-          name: ghs.name,
-        })),
-      })
-      const repos: ReposInfo[] = res.map((ghs: GithubStarred) => ({
-        name: ghs.name,
-        ownerName: ghs.owner.login,
-        htmlUrl: ghs.html_url,
-        avatarUrl: ghs.owner.avatar_url,
-        stargazersCount: ghs.stargazers_count,
-        language: ghs.language,
-        description: ghs.description,
-      }))
-      actions.setTrackedRepos(repos, user)
-    })
-  }
-
-  addTrackedUser = () => (state: State, actions: Actions) => {
-    addUser(state.addUserInput)
-      .then(user => {
-        actions.refreshTracklist()
-        actions.resetTracklistError()
-      })
-      .catch(e => actions.setTracklistError(state.addUserInput))
-      .finally(() => actions.setValueTracklistInput(''))
-  }
-
-  setTrackedUser = (user: UserUI) => (state: State): State =>
-    fp.set(`trackedUsers.${user.username}`, user, state)
-
-  setTrackedRepos = (repos: ReposInfo[], stargazer: TrackedUser) => (
+  homeAddRepos = (repos: ReposInfo[], stargazer: UserInfo) => (
     state: State,
   ): State => {
-    const updatedTrackedRepos: { [k: string]: ReposUI } = fp.reduce(
-      (acc, repo) => {
-        const key = repo.ownerName + '_' + fp.replace('.', '_', repo.name)
-        if (fp.has(key, acc))
-          return fp.set(
-            key,
-            {
-              ...repo,
-              starredBy: fp.uniqBy(
-                'username',
-                fp.concat(acc[key].starredBy, stargazer),
-              ),
-              visible: true,
-            },
-            acc,
-          )
-        else
-          return fp.set(
-            key,
-            { ...repo, starredBy: [stargazer], visible: true },
-            acc,
-          )
-      },
-      { ...state.trackedRepos },
-      repos,
-    )
-    return { ...state, trackedRepos: updatedTrackedRepos }
+    return {
+      ...state,
+      repos: fp.reduce(
+        (acc, val) => {
+          const index = acc.findIndex(e => val.htmlUrl === e.htmlUrl)
+          if (index < 0) {
+            acc.push({ ...val, starredBy: [stargazer], visible: true })
+          } else {
+            acc[index].stargazersCount = val.stargazersCount
+            acc[index].starredBy.push(stargazer)
+            acc[index].starredBy = fp.uniqWith(fp.isEqual, acc[index].starredBy)
+          }
+          return [...acc]
+        },
+        [...state.repos],
+        repos,
+      ),
+    }
   }
 
-  resetTrackedRepo = () => (state: State): State => ({
+  homeRemoveAllRepos = () => (state: State): State => ({
     ...state,
-    trackedRepos: {},
+    repos: [],
   })
 
-  deleteTrackedUser = (username: string) => (
-    state: State,
-    actions: Actions,
-  ) => {
-    deleteUser(username).then(() => actions.removeTrackedUser(username))
+  homeSetFilter = (val: string) => (state: State): State => {
+    const escapedVal = fp.escapeRegExp(val)
+    const regexp = new RegExp(escapedVal, 'i')
+    return {
+      ...state,
+      repos: state.repos.map(repo => ({
+        ...repo,
+        visible:
+          regexp.test(repo.description) ||
+          regexp.test(repo.name) ||
+          regexp.test(repo.ownerName),
+      })),
+      filterRepoInput: val,
+    }
   }
 
-  removeTrackedUser = (username: string) => (state: State): State => {
-    const { trackedUsers, ...stateNoChild } = state
-    const { [username]: oldVal, ...newTrackedUsers } = trackedUsers
-    return { ...stateNoChild, trackedUsers: newTrackedUsers }
+  homeSetOrder = (val: OrderByValues) => (state: State): State => {
+    let comp: (a: ReposUI, b: ReposUI) => number = (a, b) =>
+      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+    switch (val) {
+      case OrderByValues.APLHA:
+        break
+      case OrderByValues.MOST_STARRED:
+        comp = (a, b) =>
+          a.stargazersCount > b.stargazersCount
+            ? 1
+            : b.stargazersCount > a.stargazersCount
+              ? -1
+              : 0
+        break
+      case OrderByValues.MOST_TEAM:
+        comp = (a, b) =>
+          a.starredBy.length > b.starredBy.length
+            ? 1
+            : b.starredBy.length > a.starredBy.length
+              ? -1
+              : 0
+        break
+    }
+    return {
+      ...state,
+      repos: [...state.repos].sort(comp),
+      orderRepoBy: val,
+    }
   }
 
-  setValueTracklistInput = (val: string) => (state: State): State => ({
+  // ===================== TRACKLIST =====================
+
+  tracklistAddUser = (user: UserUI) => (state: State): State =>
+    fp.findIndex(oldUser => oldUser.username === user.username, state.users) > 0
+      ? state
+      : { ...state, users: fp.concat(state.users, user) }
+
+  tracklistRemoveUser = (username: string) => (state: State): State => {
+    return {
+      ...state,
+      users: fp.remove(user => user.username === username, state.users),
+    }
+  }
+
+  tracklistSetInputValue = (val: string) => (state: State): State => ({
     ...state,
     addUserInput: val,
   })
 
-  setTracklistError = (username: string) => (state: State): State => ({
+  tracklistSetError = (username: string) => (state: State): State => ({
     ...state,
     addingUserFailed: username,
   })
 
-  resetTracklistError = () => (state: State): State => ({
-    ...state,
+  tracklistResetError = () => (state: State): Partial<State> => ({
     addingUserFailed: false,
   })
+
+  // ===================== AUTH =====================
 
   authUserChanged = (user: firebase.User | null) => (state: State): State => ({
     ...state,
@@ -124,4 +119,8 @@ export default class Actions {
       user: user,
     },
   })
+
+  // ===================== ROUTER =====================
+
+  location: LocationActions = location.actions
 }

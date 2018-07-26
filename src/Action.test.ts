@@ -1,7 +1,7 @@
-import State, { initialState } from './State'
+import { State, initialState } from './State'
 import Actions from './Actions'
 import { ReposInfo } from './models/reposInfo'
-import { TrackedUser } from './models/trackedUser'
+import { UserInfo } from './models/userInfo'
 
 const actions = new Actions()
 const ReposInfoA: ReposInfo = {
@@ -17,68 +17,68 @@ const ReposInfoAprime: ReposInfo = { ...ReposInfoA, stargazersCount: 43 }
 const ReposInfoB: ReposInfo = {
   name: 'repo',
   ownerName: 'owner',
-  htmlUrl: 'string',
-  avatarUrl: 'string',
+  htmlUrl: 'stringB',
+  avatarUrl: 'stringB',
   stargazersCount: 42,
-  language: 'string',
-  description: 'string',
+  language: 'stringB',
+  description: 'stringB',
 }
-const TrackUserA: TrackedUser = {
+const TrackUserA: UserInfo = {
   username: 'aaa',
   avatarUrl: 'bbb',
 }
-const TrackUserB: TrackedUser = {
+const TrackUserB: UserInfo = {
   username: 'ccc',
   avatarUrl: 'ddd',
 }
 
-describe('setTracklistError', () => {
+describe('tracklistSetError', () => {
   test('set to "error"', () => {
     const state = initialState
 
-    const newState = actions.setTracklistError('error')(state)
+    const newState = actions.tracklistSetError('error')(state)
     expect(newState.addingUserFailed).toBe('error')
     expect(state).not.toBe(newState)
   })
 })
 
-describe('resetTracklistError', () => {
+describe('tracklistResetError', () => {
   test('set to false', () => {
     const state = initialState
 
-    const newState = actions.resetTracklistError()(state)
+    const newState = actions.tracklistResetError()(state)
     expect(state).not.toBe(newState)
     expect(newState.addingUserFailed).toBe(false)
   })
 })
 
-describe('setValueTracklistInput', () => {
+describe('tracklistSetInputValue', () => {
   const state = initialState
 
   test('with string', () => {
-    const newState = actions.setValueTracklistInput('abab')(state)
+    const newState = actions.tracklistSetInputValue('abab')(state)
     expect(state).not.toBe(newState)
     expect(newState.addUserInput).toBe('abab')
   })
 
   test('with empty string', () => {
-    const newState2 = actions.setValueTracklistInput('')(state)
+    const newState2 = actions.tracklistSetInputValue('')(state)
     expect(state).not.toBe(newState2)
     expect(newState2.addUserInput).toBe('')
   })
 })
 
-describe('setTrackedUser', () => {
+describe('tracklistAddUser', () => {
   const state: State = initialState
 
   test('with flat object', () => {
-    const newState: State = actions.setTrackedUser({
+    const newState: State = actions.tracklistAddUser({
       username: 'aaa',
       avatarUrl: 'bbb',
       reposStarred: [],
     })(state)
     expect(state).not.toBe(newState)
-    expect(newState.trackedUsers['aaa']).toEqual({
+    expect(newState.users).toContainEqual({
       username: 'aaa',
       avatarUrl: 'bbb',
       reposStarred: [],
@@ -86,7 +86,7 @@ describe('setTrackedUser', () => {
   })
 
   test('with deep object', () => {
-    const newState: State = actions.setTrackedUser({
+    const state2: State = actions.tracklistAddUser({
       username: 'aaa',
       avatarUrl: 'bbb',
       reposStarred: [
@@ -96,8 +96,8 @@ describe('setTrackedUser', () => {
         },
       ],
     })(state)
-    expect(state).not.toBe(newState)
-    expect(newState.trackedUsers['aaa']).toEqual({
+    expect(state).not.toBe(state2)
+    expect(state2.users).toContainEqual({
       username: 'aaa',
       avatarUrl: 'bbb',
       reposStarred: [
@@ -110,43 +110,39 @@ describe('setTrackedUser', () => {
   })
 })
 
-describe('setTrackedRepo', () => {
+describe('homeAddRepos', () => {
   const state: State = initialState
-  const newState = actions.setTrackedRepos(
-    [ReposInfoA, ReposInfoB],
-    TrackUserA,
-  )(state)
+  const state1 = actions.homeAddRepos([ReposInfoA, ReposInfoB], TrackUserA)(
+    state,
+  )
 
   test('write new repos', () => {
-    expect(newState.trackedRepos).toEqual({
-      string_string: {
-        ...ReposInfoA,
-        starredBy: [TrackUserA],
-        visible: true,
-      },
-      owner_repo: {
-        ...ReposInfoB,
-        starredBy: [TrackUserA],
-        visible: true,
-      },
+    expect(state1).not.toBe(state)
+    expect(state1.repos).toHaveLength(2)
+    expect(state1.repos).toContainEqual({
+      ...ReposInfoA,
+      starredBy: [TrackUserA],
+      visible: true,
+    })
+    expect(state1.repos).toContainEqual({
+      ...ReposInfoB,
+      starredBy: [TrackUserA],
+      visible: true,
     })
   })
 
   test('update existing repo with new stargazer', () => {
-    const newState2 = actions.setTrackedRepos([ReposInfoAprime], TrackUserB)(
-      newState,
-    )
-    expect(newState2.trackedRepos).toEqual({
-      string_string: {
-        ...ReposInfoAprime,
-        starredBy: [TrackUserA, TrackUserB],
-        visible: true,
-      },
-      owner_repo: {
-        ...ReposInfoB,
-        starredBy: [TrackUserA],
-        visible: true,
-      },
+    const state2 = actions.homeAddRepos([ReposInfoAprime], TrackUserB)(state1)
+    expect(state2.repos).toHaveLength(2)
+    expect(state2.repos).toContainEqual({
+      ...ReposInfoAprime,
+      starredBy: [TrackUserA, TrackUserB],
+      visible: true,
+    })
+    expect(state2.repos).toContainEqual({
+      ...ReposInfoB,
+      starredBy: [TrackUserA],
+      visible: true,
     })
   })
 })

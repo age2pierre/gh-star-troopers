@@ -1,7 +1,57 @@
 import { h } from 'hyperapp'
-import State from './State'
+import { State } from './State'
 import Actions from './Actions'
 import { ReposUI } from './models/reposInfo'
+import { OrderByValues } from './models/filterRepo'
+import refresh from './refresh.svg'
+
+const Filters = () => (state: State, actions: Actions) => {
+  return (
+    <li className="list-group-item">
+      <div className="row">
+        <div className="col">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Filter</span>
+            </div>
+            <input
+              type="text"
+              class="form-control"
+              value={state.filterRepoInput}
+              oninput={(e: Event) => {
+                actions.homeSetFilter((e.target as HTMLInputElement).value)
+              }}
+            />
+          </div>
+        </div>
+        <div className="col-3">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <label class="input-group-text">Order by</label>
+            </div>
+            <select
+              class="custom-select"
+              value={state.orderRepoBy}
+              onchange={(e: Event) => {
+                actions.homeSetOrder((e.target as HTMLSelectElement)
+                  .value as OrderByValues)
+              }}
+            >
+              <option value={OrderByValues.APLHA}>A-Z</option>
+              <option value={OrderByValues.MOST_STARRED}>Overall stars</option>
+              <option value={OrderByValues.MOST_TEAM}>Team stars</option>
+            </select>
+          </div>
+        </div>
+        <div className="col-1">
+          <button class="btn btn-primary">
+            <img width="15" height="15" src={refresh} />
+          </button>
+        </div>
+      </div>
+    </li>
+  )
+}
 
 const Tile = (repo: ReposUI) => (
   <li className="list-group-item" hidden={!repo.visible}>
@@ -43,22 +93,20 @@ export const Home = () => (state: State, actions: Actions) => {
     <div className="w-100">
       <h1>Home</h1>
       <ul className="list-group">
-        {Object.keys(state.trackedRepos).map(key => {
-          const ui = state.trackedRepos[key]
-          return (
-            <Tile
-              avatarUrl={ui.avatarUrl}
-              description={ui.description}
-              htmlUrl={ui.htmlUrl}
-              language={ui.language}
-              name={ui.name}
-              ownerName={ui.ownerName}
-              stargazersCount={ui.stargazersCount}
-              starredBy={ui.starredBy}
-              visible={ui.visible}
-            />
-          )
-        })}
+        <Filters />
+        {state.repos.map(ui => (
+          <Tile
+            avatarUrl={ui.avatarUrl}
+            description={ui.description}
+            htmlUrl={ui.htmlUrl}
+            language={ui.language}
+            name={ui.name}
+            ownerName={ui.ownerName}
+            stargazersCount={ui.stargazersCount}
+            starredBy={ui.starredBy}
+            visible={ui.visible}
+          />
+        ))}
       </ul>
     </div>
   )

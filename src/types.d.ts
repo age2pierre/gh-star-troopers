@@ -4,6 +4,11 @@ declare var process: {
   }
 }
 
+declare module '*.svg' {
+  const content: any
+  export default content
+}
+
 declare module '@hyperapp/logger' {
   export function withLogger<T>(app: T): T
 }
@@ -42,13 +47,13 @@ declare module '@hyperapp/router' {
   }
 
   export function Route<P>(
-    props: RouteProps<P>
+    props: RouteProps<P>,
   ): VNode<RenderProps<P>> | undefined
 
   /**Switch */
   export function Switch<P>(
     props: object,
-    children: Array<VNode<RouteProps<P>>>
+    children: Array<VNode<RouteProps<P>>>,
   ): VNode<object>
 
   /** Redirect */

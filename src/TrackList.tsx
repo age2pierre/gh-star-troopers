@@ -1,47 +1,43 @@
 import { h } from 'hyperapp'
 import Actions from './Actions'
-import State from './State'
-import { UserUI } from './models/trackedUser'
+import { State } from './State'
 
 export const Tracklist = () => (state: State, actions: Actions) => {
   return (
     <div class="w-100">
       <h1>Tracklist</h1>
-      <ul class="list-group" oncreate={() => actions.refreshTracklist()}>
+      <ul class="list-group" oncreate={() => null /* FIXME handle page init*/}>
         <InputBar />
-        {Object.keys(state.trackedUsers).map(key => {
-          const user: UserUI = state.trackedUsers[key]
-          return (
-            <li class="list-group-item">
-              <div className="media">
-                <img
-                  src={user.avatarUrl}
-                  style={{
-                    height: '64px',
-                    width: '64px',
-                  }}
-                  class="mr-3 rounded-circle shadow"
-                />
-                <div className="media-body">
-                  <div className="row">
-                    <div className="col">
-                      <h3>{user.username}</h3>
-                    </div>
-                    <div className="col text-right">
-                      <button
-                        class="btn btn-sm btn-danger"
-                        onclick={() => actions.deleteTrackedUser(user.username)}
-                      >
-                        &times;&nbsp;Del
-                      </button>
-                    </div>
+        {state.users.map(user => (
+          <li class="list-group-item">
+            <div className="media">
+              <img
+                src={user.avatarUrl}
+                style={{
+                  height: '64px',
+                  width: '64px',
+                }}
+                class="mr-3 rounded-circle shadow"
+              />
+              <div className="media-body">
+                <div className="row">
+                  <div className="col">
+                    <h3>{user.username}</h3>
                   </div>
-                  <p>Starred {user.reposStarred.length} repos</p>
+                  <div className="col text-right">
+                    <button
+                      class="btn btn-sm btn-danger close"
+                      onclick={() => null} // FIXME handle delete user
+                    >
+                      &times;
+                    </button>
+                  </div>
                 </div>
+                <p>Starred {user.reposStarred.length} repos</p>
               </div>
-            </li>
-          )
-        })}
+            </div>
+          </li>
+        ))}
       </ul>
     </div>
   )
@@ -72,17 +68,17 @@ const InputBar = () => (state: State, actions: Actions) => {
           class="form-control"
           value={state.addUserInput}
           oninput={(e: Event) => {
-            actions.setValueTracklistInput((e.target as HTMLInputElement).value)
+            actions.tracklistSetInputValue((e.target as HTMLInputElement).value)
           }}
           onkeyup={(e: KeyboardEvent) => {
-            if (e.code === 'Enter') actions.addTrackedUser()
+            if (e.code === 'Enter') null // FIXME handle add user
           }}
         />
         <div class="input-group-append">
           <button
             class="btn btn-primary"
             type="button"
-            onclick={(e: MouseEvent) => actions.addTrackedUser()}
+            onclick={(e: MouseEvent) => null} // FIXME handle add user
           >
             + Add
           </button>
