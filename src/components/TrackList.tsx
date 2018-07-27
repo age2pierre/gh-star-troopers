@@ -7,7 +7,7 @@ export const Tracklist = () => (state: State, actions: Actions) => {
   return (
     <div class="w-100">
       <h1>Tracklist</h1>
-      <ul class="list-group" oncreate={() => null /* FIXME handle page init*/}>
+      <ul class="list-group" oncreate={actions.handleOnCreateTracklist}>
         <InputBar />
         {state.stargazers.map(user => (
           <li class="list-group-item">

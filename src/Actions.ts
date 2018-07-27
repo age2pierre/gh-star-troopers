@@ -5,7 +5,11 @@ import { location, LocationActions } from '@hyperapp/router'
 import * as fp from 'lodash/fp'
 import { OrderByValues } from './models/filterRepo'
 import { githubGetUser, githubGetRepos } from './utils/github'
-import { firebaseAddUser, firebaseDeleteUser } from './utils/firebase'
+import {
+  firebaseAddUser,
+  firebaseDeleteUser,
+  firebaseGetAllUsers,
+} from './utils/firebase'
 
 export default class Actions {
   // ===================== HOME =====================
@@ -173,7 +177,28 @@ export default class Actions {
     actions.tracklistSetLoading(false)
   }
 
-  handleOnCreateTracklist = () => async (state: State, actions: Actions) => {}
+  handleOnCreateTracklist = () => async (state: State, actions: Actions) => {
+    if (state.stargazers.length === 0) {
+      actions.tracklistSetLoading(true)
+      const usersInfo = await firebaseGetAllUsers()
+      const reposByUser = await Promise.all(
+        usersInfo.map(async u => ({
+          stargazerInfo: u,
+          repos: await githubGetRepos(u.username, state.auth.githubAccesToken),
+        })),
+      )
+      reposByUser.forEach(e => {
+        actions.tracklistAddUser({
+          ...e.stargazerInfo,
+          reposStarred: e.repos.map(r => ({
+            owner: r.owner.login,
+            name: r.name,
+          })),
+        })
+      })
+      actions.tracklistSetLoading(false)
+    }
+  }
 
   // ===================== AUTH =====================
 
@@ -191,7 +216,6 @@ export default class Actions {
   setGithubAccesToken = (userCred: firebase.auth.UserCredential) => (
     state: State,
   ): State => {
-    console.log('usercred => ' + JSON.stringify(userCred))
     return {
       ...state,
       auth: {
