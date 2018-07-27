@@ -1,9 +1,9 @@
 import { h } from 'hyperapp'
-import { State } from './State'
-import Actions from './Actions'
-import { ReposUI } from './models/reposInfo'
-import { OrderByValues } from './models/filterRepo'
-import refresh from './img/refresh.svg'
+import { State } from '../State'
+import Actions from '../Actions'
+import { ReposUI } from '../models/reposInfo'
+import { OrderByValues } from '../models/filterRepo'
+import refresh from '../img/refresh.svg'
 
 const Filters = () => (state: State, actions: Actions) => {
   return (

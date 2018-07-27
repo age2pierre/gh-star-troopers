@@ -10,12 +10,23 @@ function api<T>(url: string): Promise<T> {
   })
 }
 
-export function getRepos(username: string): Promise<GithubStarred[]> {
+export function githubGetRepos(
+  username: string,
+  accessToken?: string | null,
+): Promise<GithubStarred[]> {
   return api<GithubStarred[]>(
-    `https://api.github.com/users/${username}/starred`,
+    `https://api.github.com/users/${username}/starred${
+      accessToken ? '?access_token=' + accessToken : ''
+    }`,
   )
 }
 
-export function githubGetUser(username: string): Promise<GithubUser> {
-  return api<GithubUser>(`https://api.github.com/users/${username}`)
+export function githubGetUser(
+  username: string,
+  accessToken?: string | null,
+): Promise<GithubUser> {
+  return api<GithubUser>(
+    `https://api.github.com/users/${username +
+      (accessToken ? '?access_token=' + accessToken : '')}`,
+  )
 }

@@ -1,9 +1,11 @@
 import { ReposInfo, ReposUI } from './models/reposInfo'
-import { Stargazer, StargazerInfo } from './models/stargazerInfo'
+import { StargazerUI, StargazerInfo } from './models/stargazerInfo'
 import { State } from './State'
 import { location, LocationActions } from '@hyperapp/router'
 import * as fp from 'lodash/fp'
 import { OrderByValues } from './models/filterRepo'
+import { githubGetUser, githubGetRepos } from './utils/github'
+import { firebaseAddUser, firebaseDeleteUser } from './utils/firebase'
 
 export default class Actions {
   // ===================== HOME =====================
@@ -30,6 +32,14 @@ export default class Actions {
       ),
     }
   }
+
+  homeRemoveLonelyRepos = (username: string) => (state: State): State => ({
+    ...state,
+    repos: fp.filter(
+      e => e.starredBy.length === 1 && e.starredBy[0].username === username,
+      state.repos,
+    ),
+  })
 
   homeRemoveAllRepos = () => (state: State): State => ({
     ...state,
@@ -84,7 +94,7 @@ export default class Actions {
 
   // ===================== TRACKLIST =====================
 
-  tracklistAddUser = (stargazer: Stargazer) => (state: State): State =>
+  tracklistAddUser = (stargazer: StargazerUI) => (state: State): State =>
     fp.findIndex(
       oldUser => oldUser.username === stargazer.username,
       state.stargazers,
@@ -107,6 +117,11 @@ export default class Actions {
     addUserInput: val,
   })
 
+  tracklistSetLoading = (val: boolean) => (state: State): State => ({
+    ...state,
+    tracklistLoading: val,
+  })
+
   tracklistSetError = (username: string) => (state: State): State => ({
     ...state,
     addingUserFailed: username,
@@ -115,6 +130,50 @@ export default class Actions {
   tracklistResetError = () => (state: State): Partial<State> => ({
     addingUserFailed: false,
   })
+
+  handleAddStargazer = () => async (state: State, actions: Actions) => {
+    try {
+      actions.tracklistSetLoading(true)
+      const ghUser = await githubGetUser(
+        state.addUserInput,
+        state.auth.githubAccesToken,
+      )
+      const stargazerInfo = await firebaseAddUser({
+        username: ghUser.login,
+        avatarUrl: ghUser.avatar_url,
+      })
+      const ghStarredRepo = await githubGetRepos(
+        stargazerInfo.username,
+        state.auth.githubAccesToken,
+      )
+      actions.tracklistAddUser({
+        ...stargazerInfo,
+        reposStarred: ghStarredRepo.map(r => ({
+          owner: r.owner.login,
+          name: r.name,
+        })),
+      })
+      actions.tracklistResetError()
+    } catch (error) {
+      actions.tracklistSetError(state.addUserInput)
+    } finally {
+      actions.tracklistSetInputValue('')
+      actions.tracklistSetLoading(false)
+    }
+  }
+
+  handleDeleteStargazer = (stargazer: StargazerUI) => async (
+    state: State,
+    actions: Actions,
+  ) => {
+    actions.tracklistSetLoading(true)
+    await firebaseDeleteUser(stargazer.username)
+    actions.tracklistRemoveUser(stargazer.username)
+    actions.homeRemoveLonelyRepos(stargazer.username)
+    actions.tracklistSetLoading(false)
+  }
+
+  handleOnCreateTracklist = () => async (state: State, actions: Actions) => {}
 
   // ===================== AUTH =====================
 

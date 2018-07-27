@@ -1,9 +1,9 @@
 import { h } from 'hyperapp'
-import { State } from './State'
-import Actions from './Actions'
-import { signInGithub, signInGoogle } from './utils/firebase'
-import googleLogo from './img/google-logo.svg'
-import githubLogo from './img/github-logo.svg'
+import { State } from '../State'
+import Actions from '../Actions'
+import { signInGithub, signInGoogle } from '../utils/firebase'
+import googleLogo from '../img/google-logo.svg'
+import githubLogo from '../img/github-logo.svg'
 
 export const SignIn = () => (state: State, actions: Actions) => (
   <div>

@@ -1,13 +1,13 @@
 import { h } from 'hyperapp'
-import Actions from './Actions'
-import { State } from './State'
+import Actions from '../Actions'
+import { State } from '../State'
 import { Link, Route, Redirect, Switch } from '@hyperapp/router'
 import { Home } from './Home'
 import { Tracklist } from './TrackList'
 import { SignIn } from './SignIn'
-import { routes } from './routes'
-import { signOut } from './utils/firebase'
-import ctLogo from './img/ct-logo.png'
+import { routes } from '../routes'
+import { signOut } from '../utils/firebase'
+import ctLogo from '../img/ct-logo.png'
 
 export default (state: State, actions: Actions) => (
   <div class="w-auto">

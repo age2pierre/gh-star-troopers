@@ -1,6 +1,7 @@
 import { h } from 'hyperapp'
-import Actions from './Actions'
-import { State } from './State'
+import Actions from '../Actions'
+import { State } from '../State'
+import './spinner.scss'
 
 export const Tracklist = () => (state: State, actions: Actions) => {
   return (
@@ -27,7 +28,7 @@ export const Tracklist = () => (state: State, actions: Actions) => {
                   <div className="col text-right">
                     <button
                       class="btn btn-sm btn-danger"
-                      onclick={() => null} // FIXME handle delete user
+                      onclick={() => actions.handleDeleteStargazer(user)}
                     >
                       <span class="close text-white"> &times;</span>
                     </button>
@@ -71,19 +72,20 @@ const InputBar = () => (state: State, actions: Actions) => {
             actions.tracklistSetInputValue((e.target as HTMLInputElement).value)
           }}
           onkeyup={(e: KeyboardEvent) => {
-            if (e.code === 'Enter') null // FIXME handle add user
+            if (e.code === 'Enter') actions.handleAddStargazer()
           }}
         />
         <div class="input-group-append">
           <button
             class="btn btn-primary"
             type="button"
-            onclick={(e: MouseEvent) => null} // FIXME handle add user
+            onclick={(e: MouseEvent) => actions.handleAddStargazer()}
           >
             + Add
           </button>
         </div>
       </div>
+      {state.tracklistLoading ? <div class="spinner mx-auto" /> : <span />}
     </li>
   )
 }

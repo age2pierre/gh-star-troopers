@@ -3,7 +3,7 @@ export interface StargazerInfo {
   avatarUrl: string
 }
 
-export interface Stargazer extends StargazerInfo {
+export interface StargazerUI extends StargazerInfo {
   reposStarred: Array<{
     owner: string
     name: string
