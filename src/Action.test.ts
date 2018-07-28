@@ -112,36 +112,40 @@ describe('tracklistAddUser', () => {
 
 describe('homeAddRepos', () => {
   const state: State = initialState
-  const state1 = actions.homeAddRepos([ReposInfoA, ReposInfoB], TrackUserA)(
-    state,
-  )
+  const state1 = actions.homeAddRepos({
+    repos: [ReposInfoA, ReposInfoB],
+    stargazer: TrackUserA.username,
+  })(state)
 
   test('write new repos', () => {
     expect(state1).not.toBe(state)
     expect(state1.repos).toHaveLength(2)
     expect(state1.repos).toContainEqual({
       ...ReposInfoA,
-      starredBy: [TrackUserA],
+      starredBy: [TrackUserA.username],
       visible: true,
     })
     expect(state1.repos).toContainEqual({
       ...ReposInfoB,
-      starredBy: [TrackUserA],
+      starredBy: [TrackUserA.username],
       visible: true,
     })
   })
 
   test('update existing repo with new stargazer', () => {
-    const state2 = actions.homeAddRepos([ReposInfoAprime], TrackUserB)(state1)
+    const state2 = actions.homeAddRepos({
+      repos: [ReposInfoAprime],
+      stargazer: TrackUserB.username,
+    })(state1)
     expect(state2.repos).toHaveLength(2)
     expect(state2.repos).toContainEqual({
       ...ReposInfoAprime,
-      starredBy: [TrackUserA, TrackUserB],
+      starredBy: [TrackUserA.username, TrackUserB.username],
       visible: true,
     })
     expect(state2.repos).toContainEqual({
       ...ReposInfoB,
-      starredBy: [TrackUserA],
+      starredBy: [TrackUserA.username],
       visible: true,
     })
   })

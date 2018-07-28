@@ -1,13 +1,12 @@
 import { h } from 'hyperapp'
 import Actions from '../Actions'
 import { State } from '../State'
-import './spinner.scss'
 
 export const Tracklist = () => (state: State, actions: Actions) => {
   return (
     <div class="w-100">
       <h1>Tracklist</h1>
-      <ul class="list-group" oncreate={actions.handleOnCreateTracklist}>
+      <ul class="list-group" oncreate={actions.handleStartApp}>
         <InputBar />
         {state.stargazers.map(user => (
           <li class="list-group-item">

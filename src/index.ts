@@ -6,8 +6,6 @@ import { initialState } from './State'
 import devtools from 'hyperapp-redux-devtools'
 import { fbAuth } from './utils/firebase'
 
-import 'bootstrap/dist/css/bootstrap.min.css'
-
 let main: Actions
 
 if (process.env.NODE_ENV === 'production')

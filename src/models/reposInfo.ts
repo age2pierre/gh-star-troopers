@@ -1,5 +1,3 @@
-import { StargazerInfo } from './stargazerInfo'
-
 export interface ReposInfo {
   name: string
   ownerName: string
@@ -11,6 +9,6 @@ export interface ReposInfo {
 }
 
 export interface ReposUI extends ReposInfo {
-  starredBy: StargazerInfo[]
+  starredBy: string[]
   visible: boolean
 }

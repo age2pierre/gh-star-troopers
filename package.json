@@ -6,7 +6,7 @@
   "scripts": {
     "start": "rimraf .cache dist && parcel ./src/index.html --no-autoinstall",
     "test": "jest",
-    "build": "rimraf .cache dist && parcel build ./src/index.html --detailed-report"
+    "build": "rimraf .cache dist && parcel build ./src/index.html --detailed-report --no-source-maps"
   },
   "license": "MIT",
   "author": "p.robillard@code-troopers.com",
@@ -24,6 +24,7 @@
     "jest": "^23.4.0",
     "node-sass": "^4.9.2",
     "parcel-bundler": "^1.9.4",
+    "parcel-plugin-bundle-visualiser": "^1.1.2",
     "rimraf": "^2.6.2",
     "ts-jest": "^23.0.0",
     "typescript": "^2.9.2"

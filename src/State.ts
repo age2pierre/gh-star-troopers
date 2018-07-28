@@ -17,6 +17,7 @@ export interface State {
   repos: ReposUI[]
   addingUserFailed: boolean | string
   addUserInput: string
+  homeLoading: boolean
   tracklistLoading: boolean
   filterRepoInput: string
   orderRepoBy: OrderByValues
@@ -33,6 +34,7 @@ export const initialState: State = {
   },
   addingUserFailed: false,
   addUserInput: '',
+  homeLoading: false,
   tracklistLoading: false,
   stargazers: [],
   repos: [],

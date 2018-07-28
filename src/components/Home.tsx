@@ -44,11 +44,15 @@ const Filters = () => (state: State, actions: Actions) => {
           </div>
         </div>
         <div className="col-1">
-          <button class="btn btn-primary">
+          <button
+            class="btn btn-primary"
+            onclick={() => actions.handleStartApp(true)}
+          >
             <img width="15" height="15" src={refresh} />
           </button>
         </div>
       </div>
+      {state.homeLoading ? <div class="spinner mx-auto" /> : <span />}
     </li>
   )
 }
@@ -81,9 +85,7 @@ const Tile = (repo: ReposUI) => (
     <p class="mt-2">
       Starred by :
       {repo.starredBy.map(user => (
-        <span class="badge badge-pill badge-secondary ml-2">
-          {user.username}
-        </span>
+        <span class="badge badge-pill badge-secondary ml-2">{user}</span>
       ))}
     </p>
   </li>
@@ -93,7 +95,7 @@ export const Home = () => (state: State, actions: Actions) => {
   return (
     <div className="w-100">
       <h1>Home</h1>
-      <ul className="list-group">
+      <ul className="list-group" oncreate={actions.handleStartApp}>
         <Filters />
         {state.repos.map(ui => (
           <Tile
