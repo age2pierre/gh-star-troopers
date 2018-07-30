@@ -17,7 +17,6 @@ export default class Actions {
   homeAddRepos = (arg: { stargazer: string; repos: ReposInfo[] }) => (
     state: State,
   ): State => {
-    console.log('home add repos => ' + arg.stargazer)
     return {
       ...state,
       repos: fp.reduce(

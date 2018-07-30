@@ -6,7 +6,8 @@
   "scripts": {
     "start": "rimraf .cache dist && parcel ./src/index.html --no-autoinstall",
     "test": "jest",
-    "build": "rimraf .cache dist && parcel build ./src/index.html --detailed-report --no-source-maps"
+    "build": "rimraf .cache dist && parcel build ./src/index.html --detailed-report --no-source-maps",
+    "deploy": "yarn build && firebase deploy"
   },
   "license": "MIT",
   "author": "p.robillard@code-troopers.com",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@types/jest": "^23.1.5",
+    "firebase-tools": "^4.0.0",
     "hyperapp-redux-devtools": "^1.1.6",
     "jest": "^23.4.0",
     "node-sass": "^4.9.2",
