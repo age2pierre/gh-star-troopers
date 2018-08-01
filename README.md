@@ -37,6 +37,7 @@ Code style is ensured by prettier (not install in dependencies, [use IDE plugin]
 - [ ] Use firestore REST API to minimze bundle size
 - [ ] Make use of parcel dynamic imports to reduce time to first render
 - [ ] Find the right jest config to not be in conflict with parcel/TS/lodash tree shaking (aka scope-hoisting)
+- [ ] Filter by team stargazer and order by most recently added
 
 ## License
 
@@ -49,4 +50,5 @@ The logo is the property of Code Troopers SAS (contact@code-troopers.com).
 - [Hyperapp](https://hyperapp.js.org/) - The minimal web framework used, combines state management with a virtual DOM engine.
 - [Firebase](https://firebase.google.com/) - For authentication, cloud database and hosting solution.
 - [Jest](https://jestjs.io/) - Testing library.
-- [Lodash/FP]() - As a utility library for immutable transformation.
+- [Lodash/FP](https://github.com/lodash/lodash/wiki/FP-Guide) - As a utility library for immutable transformation.
+- [Parcel](https://parceljs.org/) - Assest bundler with HMR, Dev server, tree shaking, TS/Babel/postCSS/Sass/... out of the box and zero config.
