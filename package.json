@@ -13,13 +13,13 @@
   "author": "p.robillard@code-troopers.com",
   "dependencies": {
     "@hyperapp/router": "^0.7.0",
-    "@types/lodash": "^4.14.112",
     "bootstrap": "^4.1.1",
     "firebase": "^5.2.0",
     "hyperapp": "^1.2.6",
     "lodash": "^4.17.10"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.112",
     "@types/jest": "^23.1.5",
     "firebase-tools": "^4.0.0",
     "hyperapp-redux-devtools": "^1.1.6",
